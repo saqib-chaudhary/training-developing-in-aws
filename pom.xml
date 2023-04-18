@@ -35,7 +35,7 @@
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
-           
+         <!-- to create fat jar -->   
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-assembly-plugin</artifactId>
@@ -59,6 +59,22 @@
                 </execution>
             </executions>
         </plugin>
+        <!-- to run without creating fat jar and adding all depnpencies -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.1.0</version>
+          <configuration>
+              <executable>java</executable>
+              <arguments>
+                  <argument>-Djava.library.path=${project.basedir}/lib</argument>
+                  <argument>-classpath</argument>
+                  <classpath />
+                  <argument>com.tpicap.cms.App</argument>
+              </arguments>
+          </configuration>
+       </plugin>
+        
       </plugins>
     </pluginManagement>
   </build>

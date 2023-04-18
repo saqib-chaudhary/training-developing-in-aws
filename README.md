@@ -12,6 +12,11 @@ sudo tar xf /tmp/apache-maven-*.tar.gz -C /opt
 
 # find alternatives to find java path 
 sudo alternatives --config java
+
+# or
+
+readlink -f $(which java) | sed 's/\/bin\/java//'
+
 sudo nano /etc/profile.d/maven.sh
 
 
@@ -23,6 +28,10 @@ export PATH=${M2_HOME}/bin:${PATH}
 sudo chmod +x /etc/profile.d/maven.sh
 source /etc/profile.d/maven.sh
 
+# Directly executing App with lib in path 
+mvn clean compile exec:exec
+
+# Using fat jar to it 
 mvn clean compile assembly:single
 java -jar target/aws-training-1.0-SNAPSHOT-jar-with-dependencies.jar tpicap us-east-2 
 
