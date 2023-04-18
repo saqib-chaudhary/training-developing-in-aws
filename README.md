@@ -1,14 +1,34 @@
-         ___        ______     ____ _                 _  ___  
-        / \ \      / / ___|   / ___| | ___  _   _  __| |/ _ \ 
-       / _ \ \ /\ / /\___ \  | |   | |/ _ \| | | |/ _` | (_) |
-      / ___ \ V  V /  ___) | | |___| | (_) | |_| | (_| |\__, |
-     /_/   \_\_/\_/  |____/   \____|_|\___/ \__,_|\__,_|  /_/ 
- ----------------------------------------------------------------- 
+### Java AWS SDK
+
+https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/setup.html
 
 
-Hi there! Welcome to AWS Cloud9!
+```
+# missing maven on Amazon linux 2
 
-To get started, create some files, play with the terminal,
-or visit https://docs.aws.amazon.com/console/cloud9/ for our documentation.
+cd /tmp
+sudo wget https://downloads.apache.org/maven/maven-3/3.9.1/binaries/apache-maven-3.9.1-bin.tar.gz
+sudo tar xf /tmp/apache-maven-*.tar.gz -C /opt
 
-Happy coding!
+# find alternatives to find java path 
+sudo alternatives --config java
+sudo nano /etc/profile.d/maven.sh
+
+
+export JAVA_HOME=/usr/lib/jvm/java-11-amazon-corretto.x86_64
+export M2_HOME=/opt/apache-maven-3.9.1
+export MAVEN_HOME=/opt/apache-maven-3.9.1
+export PATH=${M2_HOME}/bin:${PATH}
+
+sudo chmod +x /etc/profile.d/maven.sh
+source /etc/profile.d/maven.sh
+
+mvn clean compile assembly:single
+java -jar target/aws-training-1.0-SNAPSHOT-jar-with-dependencies.jar tpicap us-east-2 
+
+```
+
+**Create Fat (Uber) Maven jar with all dependencies** 
+
+https://stackoverflow.com/questions/574594/how-can-i-create-an-executable-runnable-jar-with-dependencies-using-maven
+
