@@ -55,6 +55,14 @@
     </dependency>
     <dependency>
       <groupId>software.amazon.awssdk</groupId>
+      <artifactId>dynamodb-enhanced</artifactId>
+    </dependency>
+    <!-- <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>lambda</artifactId>
+    </dependency> -->
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
       <artifactId>sts</artifactId>
     </dependency>
     <dependency>
@@ -65,6 +73,11 @@
       <groupId>software.amazon.awssdk.crt</groupId>
       <artifactId>aws-crt</artifactId>
       <version>0.21.12</version>
+    </dependency>
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-lambda-java-core</artifactId>
+      <version>1.2.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -81,14 +94,20 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-1.2-api</artifactId>
-     </dependency>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-configuration2</artifactId>
+        <version>2.9.0</version>
+    </dependency>
+
   </dependencies>
 
   <build>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
-      <plugins>
-        <!-- to create fat jar -->
-        <plugin>
+    <plugins>
+      <!-- to create fat jar (better to use shade plaugin) -->
+      <!-- <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
           <configuration>
@@ -110,24 +129,58 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
-        <!-- to run without creating fat jar and adding all depnpencies -->
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <version>3.1.0</version>
-          <configuration>
-            <executable>java</executable>
-            <arguments>
-              <argument>-Djava.library.path=${project.basedir}/lib</argument>
-              <argument>-classpath</argument>
-              <classpath />
-              <argument>com.tpicap.cms.App</argument>
-            </arguments>
-          </configuration>
-        </plugin>
+        </plugin> -->
+      <!-- to run without creating fat jar and adding all depnpencies -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <executable>java</executable>
+          <arguments>
+            <argument>-Djava.library.path=${project.basedir}/lib</argument>
+            <argument>-classpath</argument>
+            <classpath />
+            <argument>com.tpicap.cms.App</argument>
+          </arguments>
+        </configuration>
+      </plugin>
+      <!-- to create fat jar inside zip for lamda -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.2</version>
+        <configuration>
+          <createDependencyReducedPom>false</createDependencyReducedPom>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.5.0</version>
+        <executions>
+          <execution>
+            <id>assemble</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <descriptors>
+                <descriptor>./assembly.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-      </plugins>
-    </pluginManagement>
+    </plugins>
   </build>
 </project>

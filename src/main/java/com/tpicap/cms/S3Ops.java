@@ -1,15 +1,13 @@
 package com.tpicap.cms;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.core.waiters.WaiterResponse;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
-import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.internal.crt.S3CrtAsyncClient;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -21,24 +19,20 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.waiters.S3AsyncWaiter;
-import software.amazon.awssdk.services.s3.waiters.S3Waiter;
 import software.amazon.awssdk.transfer.s3.S3TransferManager;
 import software.amazon.awssdk.transfer.s3.model.FileUpload;
 import software.amazon.awssdk.transfer.s3.model.UploadFileRequest;
 import software.amazon.awssdk.transfer.s3.progress.LoggingTransferListener;
 
-public class S3Ops {
+public class S3Ops implements AutoCloseable {
 
     // https://aws.amazon.com/blogs/developer/introducing-crt-based-s3-client-and-the-s3-transfer-manager-in-the-aws-sdk-for-java-2-x/
 
-    private S3AsyncClient  s3 = null;
+    private S3AsyncClient s3 = null;
 
-    public S3Ops() {
-        ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.create("tpicap");
-        Region region = Region.US_EAST_2;
-        s3 = S3AsyncClient .builder()
-                .region(region)
-                .credentialsProvider(credentialsProvider)
+    public S3Ops(AppConfig appConfig) {
+        s3 = S3CrtAsyncClient.builder()
+                .region(appConfig.getAwsRegion())                
                 .build();
 
     }
@@ -63,8 +57,8 @@ public class S3Ops {
                 .bucket(bucketName)
                 .build();
 
-        CompletableFuture<WaiterResponse<HeadBucketResponse>> result = 
-            s3Waiter.waitUntilBucketExists(bucketRequestWait);
+        CompletableFuture<WaiterResponse<HeadBucketResponse>> result = s3Waiter
+                .waitUntilBucketExists(bucketRequestWait);
         result.join().matched().response().ifPresent(System.out::println);
         System.out.println(bucketName + " is ready");
 
@@ -77,7 +71,7 @@ public class S3Ops {
                 .bucket(bucket)
                 .build();
         CompletableFuture<ListObjectsV2Response> result;
-        ListObjectsV2Response listObjectsV2Response ;
+        ListObjectsV2Response listObjectsV2Response;
 
         do {
             result = s3.listObjectsV2(listObjectsV2Request);
@@ -125,6 +119,11 @@ public class S3Ops {
         FileUpload upload = transferManager.uploadFile(uploadFileRequest);
         upload.completionFuture().join();
 
+    }
+
+    public void close() {
+        if (s3 != null)
+            s3.close();
     }
 
 }

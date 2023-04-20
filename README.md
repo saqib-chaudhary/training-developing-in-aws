@@ -31,8 +31,12 @@ source /etc/profile.d/maven.sh
 # Directly executing App with lib in path 
 mvn clean compile exec:exec
 
-# Using fat jar to it 
+# Using fat jar to it (maven assembly plugin)
 mvn clean compile assembly:single
+java -jar target/aws-training-1.0-SNAPSHOT-jar-with-dependencies.jar tpicap us-east-2 
+
+# Using fat jar to it (maven shade)
+mvn clean compile package
 java -jar target/aws-training-1.0-SNAPSHOT-jar-with-dependencies.jar tpicap us-east-2 
 
 ```
