@@ -45,3 +45,6 @@ java -jar target/aws-training-1.0-SNAPSHOT-jar-with-dependencies.jar tpicap us-e
 
 https://stackoverflow.com/questions/574594/how-can-i-create-an-executable-runnable-jar-with-dependencies-using-maven
 
+**Deploy as Jar**
+
+aws lambda update-function-code --function-name test --zip-file fileb://target/aws-training-1.0-SNAPSHOT.jar --profile tpicap
