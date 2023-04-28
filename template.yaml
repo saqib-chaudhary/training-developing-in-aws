@@ -11,7 +11,8 @@ Resources:
       Runtime: java11
       CodeUri: ./target/aws-training-1.0-SNAPSHOT.jar
       Role: arn:aws:iam::173166755619:role/DemoLamdaRole
-      Timeout: 60
+      MemorySize: 512
+      Timeout: 300
       Environment:
         Variables:
           APP_DYNAMO_DB_TABLE: Notes 
