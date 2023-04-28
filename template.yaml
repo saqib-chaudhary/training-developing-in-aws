@@ -1,0 +1,17 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: <your stack description here>
+
+Resources:
+  CreateUpdateFunction:
+    Type: AWS::Serverless::Function
+    Properties:      
+      Handler: com.tpicap.cms.lambda.handlers.CreateUpdateHandler::handleRequest
+      Runtime: java11
+      CodeUri: ./target/aws-training-1.0-SNAPSHOT.jar
+      Role: arn:aws:iam::173166755619:role/DemoLamdaRole
+      Timeout: 60
+      Environment:
+        Variables:
+          APP_DYNAMO_DB_TABLE: Notes 
