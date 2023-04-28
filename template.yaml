@@ -1,18 +1,57 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
-Description: <your stack description here>
+Description: Poly application lambdas
 
 Resources:
   CreateUpdateFunction:
     Type: AWS::Serverless::Function
     Properties:      
-      Handler: com.tpicap.cms.lambda.handlers.CreateUpdateHandler::handleRequest
-      Runtime: java11
-      CodeUri: ./target/aws-training-1.0-SNAPSHOT.jar
+      Handler: create_update_handler.lambda_handler
+      Runtime: python3.10
+      CodeUri: ./python/lambda/target/lambda-deployment.zip
       Role: arn:aws:iam::173166755619:role/DemoLamdaRole
-      MemorySize: 512
       Timeout: 300
       Environment:
         Variables:
           APP_DYNAMO_DB_TABLE: Notes 
+          APP_AWS_PROFILE: default
+  
+  DeleteFunction:
+    Type: AWS::Serverless::Function
+    Properties:      
+      Handler: delete_handler.lambda_handler
+      Runtime: python3.10
+      CodeUri: ./python/lambda/target/lambda-deployment.zip
+      Role: arn:aws:iam::173166755619:role/DemoLamdaRole
+      Timeout: 300
+      Environment:
+        Variables:
+          APP_DYNAMO_DB_TABLE: Notes 
+          APP_AWS_PROFILE: default
+
+  SearchFunction:
+    Type: AWS::Serverless::Function
+    Properties:      
+      Handler: search_handler.lambda_handler
+      Runtime: python3.10
+      CodeUri: ./python/lambda/target/lambda-deployment.zip
+      Role: arn:aws:iam::173166755619:role/DemoLamdaRole
+      Timeout: 300
+      Environment:
+        Variables:
+          APP_DYNAMO_DB_TABLE: Notes 
+          APP_AWS_PROFILE: default
+
+  ListFunction:
+    Type: AWS::Serverless::Function
+    Properties:      
+      Handler: list_handler.lambda_handler
+      Runtime: python3.10
+      CodeUri: ./python/lambda/target/lambda-deployment.zip
+      Role: arn:aws:iam::173166755619:role/DemoLamdaRole
+      Timeout: 300
+      Environment:
+        Variables:
+          APP_DYNAMO_DB_TABLE: Notes 
+          APP_AWS_PROFILE: default

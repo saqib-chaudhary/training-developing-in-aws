@@ -48,3 +48,4 @@ https://stackoverflow.com/questions/574594/how-can-i-create-an-executable-runnab
 **Deploy as Jar**
 
 aws lambda update-function-code --function-name test --zip-file fileb://target/aws-training-1.0-SNAPSHOT.jar --profile tpicap
+sam local invoke "CreateUpdateFunction" --profile tpicap -e events\create.json
